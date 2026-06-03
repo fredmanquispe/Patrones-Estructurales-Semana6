@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+using namespace std;
+
+class ComponenteSistema {
+protected:
+    string nombre;
+public:
+    ComponenteSistema(string nom) : nombre(nom) {}
+    virtual void mostrar(int profundidad = 0) = 0;
+    virtual ~ComponenteSistema() {}
+};
+
+class Archivo : public ComponenteSistema {
+public:
+    Archivo(string nom) : ComponenteSistema(nom) {}
+    void mostrar(int profundidad = 0) override {
+        for (int i = 0; i < profundidad; ++i) cout << "  ";
+        cout << "- [Archivo] " << nombre << "\n";
+    }
+};
+
+class Carpeta : public ComponenteSistema {
+private:
+    vector<shared_ptr<ComponenteSistema>> elementos;
+public:
+    Carpeta(string nom) : ComponenteSistema(nom) {}
+    void añadir(shared_ptr<ComponenteSistema> componente) { elementos.push_back(componente); }
+    void mostrar(int profundidad = 0) override {
+        for (int i = 0; i < profundidad; ++i) cout << "  ";
+        cout << "+ [Carpeta] " << nombre << "\n";
+        for (const auto& elemento : elementos) elemento->mostrar(profundidad + 1);
+    }
+};
+
+int main() {
+    cout << "--- EJERCICIO 3: COMPOSITE (SISTEMA DE ARCHIVOS) ---\n\n";
+    auto raiz = make_shared<Carpeta>("Raiz_Proyecto");
+    auto src = make_shared<Carpeta>("src");
+    src->añadir(make_shared<Archivo>("main.cpp"));
+    raiz->añadir(src);
+    raiz->mostrar();
+    return 0;
+}

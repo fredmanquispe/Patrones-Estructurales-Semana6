@@ -1,36 +1,20 @@
-### 1. Patrón Adapter (Conversión de Divisas en Pagos) - Python
+class PagoDolares:
+    """Clase existente (Adaptee) que realiza pagos en dólares."""
+    def pagar_en_dolares(self, monto):
+        return f"Pago de ${monto:.2f} realizado con éxito"
 
-Permite conectar una pasarela de pagos configurada originalmente en dólares (`USD`) con solicitudes locales que ingresan en soles (`PEN`) sin modificar el código fuente del procesador antiguo.
+class AdaptadorPago:
+    """El Adaptador que convierte la operación a Soles (PEN)."""
+    def __init__(self, pago_dolares, tasa_cambio=3.75):
+        self.pago_dolares = pago_dolares
+        self.tasa_cambio = tasa_cambio  # 1 USD = 3.75 PEN (ejemplo)
 
-```python
-class ProcesadorPagoDolares:
-    def pagar_en_dolares(self, monto_usd):
-        # Muestra el procesamiento final en la moneda nativa del sistema
-        print(f"Procesando pago de ${monto_usd:.2f} USD exitosamente.")
+    def pagar_en_soles(self, monto_soles):
+        # Convertimos los soles a dólares antes de enviarlo al sistema original
+        monto_dolares = monto_soles / self.tasa_cambio
+        
+        # Llamamos al método del objeto adaptado
+        resultado_original = self.pago_dolares.pagar_en_dolares(monto_dolares)
+        
+        return f"Adaptado a Soles -> {resultado_original} (Equivalente a S/. {monto_soles:.2f})"
 
-class TargetPagoSoles:
-    def pagar_en_soles(self, monto_pen):
-        # Interfaz objetivo que define el comportamiento esperado por el cliente local
-        raise NotImplementedError
-
-class AdaptadorPagoSoles(TargetPagoSoles):
-    def __init__(self, procesador_usd, tipo_cambio=3.75):
-        self.procesador_usd = procesador_usd
-        self.tipo_cambio = tipo_cambio
-
-    def pagar_en_soles(self, monto_pen):
-        # Realiza la conversión matemática antes de delegar la acción
-        monto_usd = monto_pen / self.tipo_cambio
-        print(f"Adaptando pago: S/. {monto_pen:.2f} PEN equivalen a ${monto_usd:.2f} USD")
-        self.procesador_usd.pagar_en_dolares(monto_usd)
-
-if __name__ == "__main__":
-    print("--- EJERCICIO 1: ADAPTER (PAGOS) ---")
-    # 1. Instanciamos el sistema antiguo (en dólares)
-    procesador_antiguo = ProcesadorPagoDolares()
-    
-    # 2. Creamos el adaptador conectando el sistema antiguo
-    adaptador = AdaptadorPagoSoles(procesador_antiguo)
-    
-    # 3. El cliente opera plenamente usando la moneda local (Soles)
-    adaptador.pagar_en_soles(150.00)

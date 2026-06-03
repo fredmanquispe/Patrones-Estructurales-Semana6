@@ -1,0 +1,24 @@
+import functools
+
+def validar_positivos(func):
+    @functools.wraps(func)
+    def envoltura(*args, **kwargs):
+        for arg in args:
+            if isinstance(arg, (int, float)) and arg <= 0:
+                return "Error: Los números deben ser mayores que cero."
+        return func(*args, **kwargs)
+    return envoltura
+
+@validar_positivos
+def calcular_raiz_cuadrada(numero):
+    import math
+    return math.sqrt(numero)
+
+@validar_positivos
+def calcular_division(dividendo, divisor):
+    return dividendo / divisor
+
+if __name__ == "__main__":
+    print("\n--- EJERCICIO 2: DECORATOR (VALIDACIÓN) ---")
+    print(f"Raíz cuadrada de 25: {calcular_raiz_cuadrada(25)}")
+    print(f"Raíz cuadrada de -9: {calcular_raiz_cuadrada(-9)}")

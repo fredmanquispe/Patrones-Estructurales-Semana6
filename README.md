@@ -14,12 +14,3 @@ Tanto en el framework Qt (C++) como en la biblioteca Java Swing (Java), las inte
 2. Decorator en Flask (Python) para el Manejo de Rutas
 
 En el microframework web Flask, el patrón Decorator se manifiesta de forma nativa a través de funciones envolventes precedidas por el operador arroba (@). Su aplicación abarca principalmente el mapeo dinámico de rutas y la inyección de pre-condiciones globales de seguridad. Al declarar una ruta mediante @app.route('/url'), el framework intercepta una función ordinaria de Python y le añade la capacidad de responder a peticiones HTTP sin alterar su código interno. De la misma manera, permite empaquetar de forma externa restricciones de acceso (como un decorador personalizado @login_required) para validar la autenticidad de las sesiones antes de ejecutar la lógica principal de la vista.
-
-
-        self.procesador_usd.pagar_en_dolares(monto_usd)
-
-if __name__ == "__main__":
-    print("--- EJERCICIO 1: ADAPTER (PAGOS) ---")
-    procesador_antiguo = ProcesadorPagoDolares()
-    adaptador = AdaptadorPagoSoles(procesador_antiguo)
-    adaptador.pagar_en_soles(150.00)

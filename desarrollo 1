@@ -1,0 +1,27 @@
+### 1. Patrón Adapter (Conversión de Divisas en Pagos) - Python
+Permite conectar una pasarela de pagos configurada en dólares (USD) con solicitudes locales que ingresan en soles (PEN) sin modificar el código fuente del procesador antiguo.
+
+```python
+class ProcesadorPagoDolares:
+    def pagar_en_dolares(self, monto_usd):
+        print(f"Procesando pago de ${monto_usd:.2f} USD exitosamente.")
+
+class TargetPagoSoles:
+    def pagar_en_soles(self, monto_pen):
+        raise NotImplementedError
+
+class AdaptadorPagoSoles(TargetPagoSoles):
+    def __init__(self, procesador_usd, tipo_cambio=3.75):
+        self.procesador_usd = procesador_usd
+        self.tipo_cambio = tipo_cambio
+
+    def pagar_en_soles(self, monto_pen):
+        monto_usd = monto_pen / self.tipo_cambio
+        print(f"Adaptando pago: S/. {monto_pen:.2f} PEN equivalen a ${monto_usd:.2f} USD")
+        self.procesador_usd.pagar_en_dolares(monto_usd)
+
+if __name__ == "__main__":
+    print("--- EJERCICIO 1: ADAPTER (PAGOS) ---")
+    procesador_antiguo = ProcesadorPagoDolares()
+    adaptador = AdaptadorPagoSoles(procesador_antiguo)
+    adaptador.pagar_en_soles(150.00)
